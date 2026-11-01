@@ -56,6 +56,9 @@ The statement is added at the end of the document:
 
 `scripts/test.sh` renders the sample and checks the statement. It needs Pandoc 3.
 
+The weekly sync copies the filter but not the test. When a release changes the statement's wording,
+the sync fails until `test/expected.txt` is updated by hand.
+
 ## License
 
 [MIT](LICENSE)
