@@ -17,4 +17,4 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       # The pandoc image has no Node, so the test runs in it with docker rather than as a job container.
-      - run: docker run --rm -v "$PWD":/w -w /w --entrypoint sh pandoc/core:3.11.0 scripts/test.sh
+      - run: docker run --rm -v "$PWD":/w:ro -w /w --entrypoint sh pandoc/core:3.11.0 scripts/test.sh
