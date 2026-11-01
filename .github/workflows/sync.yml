@@ -1,0 +1,45 @@
+name: Sync from credit-matrix
+
+# The filter is written in simonvanlierde/credit-matrix. This copies it from each new release.
+on:
+  schedule:
+    - cron: "17 5 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Copy the filter from the latest release
+        id: copy
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag=$(gh release view --repo simonvanlierde/credit-matrix --json tagName --jq .tagName)
+          if [ "$tag" = "$(cat UPSTREAM)" ]; then
+            echo "Already at $tag."
+            exit 0
+          fi
+          base="https://raw.githubusercontent.com/simonvanlierde/credit-matrix/$tag/integrations/quarto/_extensions/credit-matrix"
+          curl -fsSL "$base/credit-matrix.lua" -o credit-matrix.lua
+          curl -fsSL "$base/_extension.yml" -o _extensions/credit-matrix/_extension.yml
+          cp credit-matrix.lua _extensions/credit-matrix/credit-matrix.lua
+          echo "$tag" > UPSTREAM
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+      - name: Test
+        if: steps.copy.outputs.tag
+        run: docker run --rm -v "$PWD":/w -w /w --entrypoint sh pandoc/core:3.11.0 scripts/test.sh
+      - name: Commit
+        if: steps.copy.outputs.tag
+        env:
+          TAG: ${{ steps.copy.outputs.tag }}
+        run: |-
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add credit-matrix.lua _extensions UPSTREAM
+          git commit -m "chore: sync the filter from credit-matrix $TAG"
+          git push

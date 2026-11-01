@@ -1,0 +1,20 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  # Weekly, to catch a Pandoc release that changes how the filter behaves.
+  schedule:
+    - cron: "27 4 * * 2"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      # The pandoc image has no Node, so the test runs in it with docker rather than as a job container.
+      - run: docker run --rm -v "$PWD":/w -w /w --entrypoint sh pandoc/core:3.11.0 scripts/test.sh

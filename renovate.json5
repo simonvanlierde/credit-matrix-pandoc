@@ -1,0 +1,14 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: ["config:best-practices", ":semanticCommits", "schedule:monthly", "group:allNonMajor"],
+  minimumReleaseAge: "7 days",
+  customManagers: [
+    {
+      // The pandoc image is named inside `docker run` steps, which Renovate does not read by itself.
+      customType: "regex",
+      managerFilePatterns: ["/^\\.github/workflows/.+\\.yml$/"],
+      matchStrings: ["(?<depName>pandoc/core):(?<currentValue>\\d+\\.\\d+\\.\\d+)"],
+      datasourceTemplate: "docker",
+    },
+  ],
+}
