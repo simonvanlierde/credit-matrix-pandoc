@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Filter bugs and feature requests
+    url: https://github.com/simonvanlierde/credit-matrix/issues
+    about: The Lua filter is developed in simonvanlierde/credit-matrix; open filter issues there.
+  - name: Report a vulnerability
+    url: https://github.com/simonvanlierde/credit-matrix-pandoc/security/advisories/new
+    about: Privately, as SECURITY.md says.
