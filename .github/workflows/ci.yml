@@ -14,7 +14,10 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
       # The pandoc image has no Node, so the test runs in it with docker rather than as a job container.
       - run: docker run --rm -v "$PWD":/w:ro -w /w --entrypoint sh pandoc/core:3.11.0 scripts/test.sh
